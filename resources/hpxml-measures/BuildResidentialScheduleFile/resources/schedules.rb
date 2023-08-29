@@ -567,28 +567,28 @@ class ScheduleGenerator
     cooking_power_sch = apply_monthly_offsets(array: cooking_power_sch, weekday_monthly_shift_dict: weekday_monthly_shift_dict, weekend_monthly_shift_dict: weekend_monthly_shift_dict)
     cooking_power_sch = aggregate_array(cooking_power_sch, @minutes_per_step)
     cooking_peak_power = cooking_power_sch.max
-    @schedules[SchedulesFile::ColumnCookingRange] = cooking_power_sch.map { |power| power / cooking_peak_power }
+    @schedules[SchedulesFile::ColumnCookingRange] = cooking_power_sch.map { |power| power }
 
     random_offset = (prng.rand * 2 * offset_range).to_i - offset_range
     cw_power_sch = cw_power_sch.rotate(random_offset)
     cw_power_sch = apply_monthly_offsets(array: cw_power_sch, weekday_monthly_shift_dict: weekday_monthly_shift_dict, weekend_monthly_shift_dict: weekend_monthly_shift_dict)
     cw_power_sch = aggregate_array(cw_power_sch, @minutes_per_step)
     cw_peak_power = cw_power_sch.max
-    @schedules[SchedulesFile::ColumnClothesWasher] = cw_power_sch.map { |power| power / cw_peak_power }
+    @schedules[SchedulesFile::ColumnClothesWasher] = cw_power_sch.map { |power| power }
 
     random_offset = (prng.rand * 2 * offset_range).to_i - offset_range
     cd_power_sch = cd_power_sch.rotate(random_offset)
     cd_power_sch = apply_monthly_offsets(array: cd_power_sch, weekday_monthly_shift_dict: weekday_monthly_shift_dict, weekend_monthly_shift_dict: weekend_monthly_shift_dict)
     cd_power_sch = aggregate_array(cd_power_sch, @minutes_per_step)
     cd_peak_power = cd_power_sch.max
-    @schedules[SchedulesFile::ColumnClothesDryer] = cd_power_sch.map { |power| power / cd_peak_power }
+    @schedules[SchedulesFile::ColumnClothesDryer] = cd_power_sch.map { |power| power }
 
     random_offset = (prng.rand * 2 * offset_range).to_i - offset_range
     dw_power_sch = dw_power_sch.rotate(random_offset)
     dw_power_sch = apply_monthly_offsets(array: dw_power_sch, weekday_monthly_shift_dict: weekday_monthly_shift_dict, weekend_monthly_shift_dict: weekend_monthly_shift_dict)
     dw_power_sch = aggregate_array(dw_power_sch, @minutes_per_step)
     dw_peak_power = dw_power_sch.max
-    @schedules[SchedulesFile::ColumnDishwasher] = dw_power_sch.map { |power| power / dw_peak_power }
+    @schedules[SchedulesFile::ColumnDishwasher] = dw_power_sch.map { |power| power }
 
     @schedules[SchedulesFile::ColumnOccupants] = away_schedule.map { |i| 1.0 - i }
 
