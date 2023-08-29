@@ -1433,11 +1433,11 @@ class SchedulesFile
           fail "Schedule column name '#{col_name}' is duplicated. [context: #{schedules_path}]"
         end
 
-        if max_value_one[col_name]
-          if values.max > 1
-            fail "Schedule max value for column '#{col_name}' must be 1. [context: #{schedules_path}]"
-          end
-        end
+        #if max_value_one[col_name]
+        #  if values.max > 1
+        #    fail "Schedule max value for column '#{col_name}' must be 1. [context: #{schedules_path}]"
+        #  end
+        #end
 
         if min_value_zero[col_name]
           if values.min < 0
@@ -1527,6 +1527,38 @@ class SchedulesFile
     return schedule_file
   end
 
+  def create_schedule_file_normalization(col_name:,
+                           rows_to_skip: 1,
+                           schedule_type_limits_name: nil)
+    @model.getScheduleFiles.each do |schedule_file|
+      next if schedule_file.name.to_s != col_name
+
+      return schedule_file
+    end
+
+    if @schedules[col_name].nil?
+      return
+    end
+
+    col_index = get_col_index(col_name: col_name)
+    num_hrs_in_year = Constants.NumHoursInYear(@year)
+    schedule_length = @schedules[col_name].length
+    min_per_item = 60.0 / (schedule_length / num_hrs_in_year)
+    design_level = @schedules[col_name].max
+
+    schedule_file = OpenStudio::Model::ScheduleFile.new(@model, @output_schedules_path)
+    schedule_file = schedule_file/design_level
+    schedule_file.setName(col_name)
+    schedule_file.setColumnNumber(col_index + 1)
+    schedule_file.setRowstoSkipatTop(rows_to_skip)
+    schedule_file.setNumberofHoursofData(num_hrs_in_year.to_i)
+    schedule_file.setMinutesperItem(min_per_item.to_i)
+
+    Schedule.set_schedule_type_limits(@model, schedule_file, schedule_type_limits_name)
+
+    return schedule_file
+  end
+
   # the equivalent number of hours in the year, if the schedule was at full load (1.0)
   def annual_equivalent_full_load_hrs(col_name:,
                                       schedules: nil)
@@ -1559,6 +1591,16 @@ class SchedulesFile
     return 0 if ann_equiv_full_load_hrs == 0
 
     design_level = annual_kwh * 1000.0 / ann_equiv_full_load_hrs # W
+
+    return design_level
+  end
+
+  def calc_design_level_from_schedule_max(col_name:)
+    if @schedules[col_name].nil?
+      return
+    end
+
+    design_level = @schedules[col_name].max # W
 
     return design_level
   end
