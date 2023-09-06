@@ -49,6 +49,7 @@ class ScheduleGenerator
             SchedulesFile::ColumnLightingInterior,
             SchedulesFile::ColumnLightingGarage,
             SchedulesFile::ColumnCookingRange,
+            SchedulesFile::ColumnCookingRangeGas,
             SchedulesFile::ColumnDishwasher,
             SchedulesFile::ColumnClothesWasher,
             SchedulesFile::ColumnClothesDryer,
@@ -461,7 +462,7 @@ class ScheduleGenerator
         duration_min = (duration_15min * 15 * hot_water_dishwasher_monthly_multiplier[month - 1]).to_i
 
         duration = [duration_min, mins_in_year - step * 15].min
-        dw_power_sch.fill(avg_power, step * 15, duration)
+        dw_power_sch.fill(avg_power * 4, step * 15, duration)
         step_jump = duration_15min
       end
       last_state = dish_state
@@ -489,10 +490,10 @@ class ScheduleGenerator
         cw_duration_min = (cw_duration_15min * 15 * hot_water_clothes_washer_monthly_multiplier[month - 1]).to_i
 
         cw_duration = [cw_duration_min, mins_in_year - step * 15].min
-        cw_power_sch.fill(cw_avg_power, step * 15, cw_duration)
+        cw_power_sch.fill(cw_avg_power * 4, step * 15, cw_duration)
         cd_start_time = (step * 15 + cw_duration).to_i # clothes dryer starts immediately after washer ends\
         cd_duration = [cd_duration_min, mins_in_year - cd_start_time].min # cd_duration would be negative if cd_start_time > mins_in_year, and no filling would occur
-        cd_power_sch = cd_power_sch.fill(cd_avg_power, cd_start_time, cd_duration)
+        cd_power_sch = cd_power_sch.fill(cd_avg_power * 4, cd_start_time, cd_duration)
         step_jump = cw_duration_15min + cd_duration_15min
       end
       last_state = clothes_state
@@ -514,7 +515,7 @@ class ScheduleGenerator
         month = (start_time + step * 15 * 60).month
         duration_min = (duration_15min * 15 * cooking_monthly_multiplier[month - 1]).to_i
         duration = [duration_min, mins_in_year - step * 15].min
-        cooking_power_sch.fill(avg_power, step * 15, duration)
+        cooking_power_sch.fill(avg_power * 4, step * 15, duration)
         step_jump = duration_15min
       end
       last_state = cooking_state
@@ -565,30 +566,31 @@ class ScheduleGenerator
     random_offset = (prng.rand * 2 * offset_range).to_i - offset_range
     cooking_power_sch = cooking_power_sch.rotate(random_offset)
     cooking_power_sch = apply_monthly_offsets(array: cooking_power_sch, weekday_monthly_shift_dict: weekday_monthly_shift_dict, weekend_monthly_shift_dict: weekend_monthly_shift_dict)
-    cooking_power_sch = aggregate_array(cooking_power_sch, @minutes_per_step)
+    cooking_power_sch = average_array(cooking_power_sch, @minutes_per_step)
     cooking_peak_power = cooking_power_sch.max
-    @schedules[SchedulesFile::ColumnCookingRange] = cooking_power_sch.map { |power| power / 15 }
+    @schedules[SchedulesFile::ColumnCookingRange] = cooking_power_sch.map { |power| power }
+    @schedules[SchedulesFile::ColumnCookingRangeGas] = cooking_power_sch.map { |power| power }
 
     random_offset = (prng.rand * 2 * offset_range).to_i - offset_range
     cw_power_sch = cw_power_sch.rotate(random_offset)
     cw_power_sch = apply_monthly_offsets(array: cw_power_sch, weekday_monthly_shift_dict: weekday_monthly_shift_dict, weekend_monthly_shift_dict: weekend_monthly_shift_dict)
-    cw_power_sch = aggregate_array(cw_power_sch, @minutes_per_step)
+    cw_power_sch = average_array(cw_power_sch, @minutes_per_step)
     cw_peak_power = cw_power_sch.max
-    @schedules[SchedulesFile::ColumnClothesWasher] = cw_power_sch.map { |power| power / 15 }
+    @schedules[SchedulesFile::ColumnClothesWasher] = cw_power_sch.map { |power| power }
 
     random_offset = (prng.rand * 2 * offset_range).to_i - offset_range
     cd_power_sch = cd_power_sch.rotate(random_offset)
     cd_power_sch = apply_monthly_offsets(array: cd_power_sch, weekday_monthly_shift_dict: weekday_monthly_shift_dict, weekend_monthly_shift_dict: weekend_monthly_shift_dict)
-    cd_power_sch = aggregate_array(cd_power_sch, @minutes_per_step)
+    cd_power_sch = average_array(cd_power_sch, @minutes_per_step)
     cd_peak_power = cd_power_sch.max
-    @schedules[SchedulesFile::ColumnClothesDryer] = cd_power_sch.map { |power| power / 15 }
+    @schedules[SchedulesFile::ColumnClothesDryer] = cd_power_sch.map { |power| power }
 
     random_offset = (prng.rand * 2 * offset_range).to_i - offset_range
     dw_power_sch = dw_power_sch.rotate(random_offset)
     dw_power_sch = apply_monthly_offsets(array: dw_power_sch, weekday_monthly_shift_dict: weekday_monthly_shift_dict, weekend_monthly_shift_dict: weekend_monthly_shift_dict)
-    dw_power_sch = aggregate_array(dw_power_sch, @minutes_per_step)
+    dw_power_sch = average_array(dw_power_sch, @minutes_per_step)
     dw_peak_power = dw_power_sch.max
-    @schedules[SchedulesFile::ColumnDishwasher] = dw_power_sch.map { |power| power / 15 }
+    @schedules[SchedulesFile::ColumnDishwasher] = dw_power_sch.map { |power| power }
 
     @schedules[SchedulesFile::ColumnOccupants] = away_schedule.map { |i| 1.0 - i }
 
@@ -608,6 +610,15 @@ class ScheduleGenerator
     new_array = [0] * new_array_size
     new_array_size.times do |j|
       new_array[j] = array[(j * group_size)..(j + 1) * group_size - 1].sum(0)
+    end
+    return new_array
+  end
+
+  def average_array(array, group_size) 
+    new_array_size = array.size / group_size
+    new_array = [0] * new_array_size
+    new_array_size.times do |j|
+      new_array[j] = array[(j * group_size)..(j + 1) * group_size - 1].sum(0) / group_size
     end
     return new_array
   end
