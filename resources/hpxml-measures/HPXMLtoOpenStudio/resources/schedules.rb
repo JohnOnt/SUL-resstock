@@ -1337,6 +1337,7 @@ class SchedulesFile
   ColumnLightingGarage = 'lighting_garage'
   ColumnLightingExteriorHoliday = 'lighting_exterior_holiday'
   ColumnCookingRange = 'cooking_range'
+  ColumnCookingRangeGas = 'cooking_range_gas'
   ColumnRefrigerator = 'refrigerator'
   ColumnExtraRefrigerator = 'extra_refrigerator'
   ColumnFreezer = 'freezer'
@@ -1775,6 +1776,7 @@ class SchedulesFile
       ColumnLightingGarage,
       ColumnLightingExteriorHoliday,
       ColumnCookingRange,
+      ColumnCookingRangeGas,
       ColumnRefrigerator,
       ColumnExtraRefrigerator,
       ColumnFreezer,
