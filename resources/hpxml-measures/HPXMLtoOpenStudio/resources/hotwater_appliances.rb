@@ -49,7 +49,7 @@ class HotWaterAndAppliances
       cw_col_name = SchedulesFile::ColumnClothesWasher
       if not schedules_file.nil?
         #cw_design_level_w = schedules_file.calc_design_level_from_daily_kwh(col_name: cw_col_name, daily_kwh: cw_annual_kwh / 365.0)
-        cw_design_level_w = schedules_file.calc_design_level_from_schedule_max(col_name: cw_col_name) * 1000
+        cw_design_level_w = schedules_file.calc_design_level_from_schedule_max(col_name: cw_col_name)
         cw_power_schedule = schedules_file.create_schedule_file(col_name: cw_col_name, schedule_type_limits_name: Constants.ScheduleTypeLimitsFraction)
       end
       if cw_power_schedule.nil?
@@ -80,7 +80,7 @@ class HotWaterAndAppliances
       cd_col_name = SchedulesFile::ColumnClothesDryer
       if not schedules_file.nil?
         #cd_design_level_e = schedules_file.calc_design_level_from_annual_kwh(col_name: cd_col_name, annual_kwh: cd_annual_kwh)
-        cd_design_level_e = schedules_file.calc_design_level_from_schedule_max(col_name: cd_col_name) * 1000
+        cd_design_level_e = schedules_file.calc_design_level_from_schedule_max(col_name: cd_col_name)
         cd_design_level_f = schedules_file.calc_design_level_from_annual_therm(col_name: cd_col_name, annual_therm: cd_annual_therm)
         cd_schedule = schedules_file.create_schedule_file(col_name: cd_col_name, schedule_type_limits_name: Constants.ScheduleTypeLimitsFraction)
       end
@@ -114,7 +114,7 @@ class HotWaterAndAppliances
       dw_col_name = SchedulesFile::ColumnDishwasher
       if not schedules_file.nil?
         #dw_design_level_w = schedules_file.calc_design_level_from_daily_kwh(col_name: dw_col_name, daily_kwh: dw_annual_kwh / 365.0)
-        dw_design_level_w = schedules_file.calc_design_level_from_schedule_max(col_name: dw_col_name) * 1000
+        dw_design_level_w = schedules_file.calc_design_level_from_schedule_max(col_name: dw_col_name)
         dw_power_schedule = schedules_file.create_schedule_file(col_name: dw_col_name, schedule_type_limits_name: Constants.ScheduleTypeLimitsFraction)
       end
       if dw_power_schedule.nil?
@@ -205,7 +205,7 @@ class HotWaterAndAppliances
       cook_col_name = SchedulesFile::ColumnCookingRange
       if not schedules_file.nil?
         #cook_design_level_e = schedules_file.calc_design_level_from_annual_kwh(col_name: cook_col_name, annual_kwh: cook_annual_kwh)
-        cook_design_level_e = schedules_file.calc_design_level_from_schedule_max(col_name: cook_col_name) * 1000
+        cook_design_level_e = schedules_file.calc_design_level_from_schedule_max(col_name: cook_col_name)
         cook_design_level_f = schedules_file.calc_design_level_from_annual_therm(col_name: cook_col_name, annual_therm: cook_annual_therm)
         cook_schedule = schedules_file.create_schedule_file(col_name: cook_col_name, schedule_type_limits_name: Constants.ScheduleTypeLimitsFraction)
       end

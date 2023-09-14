@@ -1580,7 +1580,7 @@ class SchedulesFile
       return
     end
 
-    design_level = @schedules[col_name].max # W
+    design_level = @schedules[col_name].max * 1000 # W
 
     return design_level
   end
