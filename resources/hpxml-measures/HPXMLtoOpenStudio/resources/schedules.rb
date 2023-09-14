@@ -1337,7 +1337,6 @@ class SchedulesFile
   ColumnLightingGarage = 'lighting_garage'
   ColumnLightingExteriorHoliday = 'lighting_exterior_holiday'
   ColumnCookingRange = 'cooking_range'
-  ColumnCookingRangeGas = 'cooking_range_gas'
   ColumnRefrigerator = 'refrigerator'
   ColumnExtraRefrigerator = 'extra_refrigerator'
   ColumnFreezer = 'freezer'
@@ -1392,10 +1391,22 @@ class SchedulesFile
     battery_schedules
     expand_schedules
     @tmp_schedules = Marshal.load(Marshal.dump(@schedules))
+    normalize_zero_to_one_scale
     set_unavailable_periods(unavailable_periods)
     convert_setpoints
     @output_schedules_path = output_path
     export()
+  end
+
+  def normalize_zero_to_one_scale
+    range_max_value = @tmp_schedules['cooking_range'].max
+    @tmp_schedules['cooking_range'] = @tmp_schedules['cooking_range'].map { |power| power / range_max_value }
+    dishwasher_max_value = @tmp_schedules['dishwasher'].max
+    @tmp_schedules['dishwasher'] = @tmp_schedules['dishwasher'].map { |power| power / dishwasher_max_value }
+    washer_max_value = @tmp_schedules['clothes_washer'].max
+    @tmp_schedules['clothes_washer'] = @tmp_schedules['clothes_washer'].map { |power| power / washer_max_value }
+    dryer_max_value = @tmp_schedules['clothes_dryer'].max
+    @tmp_schedules['clothes_dryer'] = @tmp_schedules['clothes_dryer'].map { |power| power / dryer_max_value }
   end
 
   def nil?
@@ -1517,38 +1528,6 @@ class SchedulesFile
     min_per_item = 60.0 / (schedule_length / num_hrs_in_year)
 
     schedule_file = OpenStudio::Model::ScheduleFile.new(@model, @output_schedules_path)
-    schedule_file.setName(col_name)
-    schedule_file.setColumnNumber(col_index + 1)
-    schedule_file.setRowstoSkipatTop(rows_to_skip)
-    schedule_file.setNumberofHoursofData(num_hrs_in_year.to_i)
-    schedule_file.setMinutesperItem(min_per_item.to_i)
-
-    Schedule.set_schedule_type_limits(@model, schedule_file, schedule_type_limits_name)
-
-    return schedule_file
-  end
-
-  def create_schedule_file_normalization(col_name:,
-                           rows_to_skip: 1,
-                           schedule_type_limits_name: nil)
-    @model.getScheduleFiles.each do |schedule_file|
-      next if schedule_file.name.to_s != col_name
-
-      return schedule_file
-    end
-
-    if @schedules[col_name].nil?
-      return
-    end
-
-    col_index = get_col_index(col_name: col_name)
-    num_hrs_in_year = Constants.NumHoursInYear(@year)
-    schedule_length = @schedules[col_name].length
-    min_per_item = 60.0 / (schedule_length / num_hrs_in_year)
-    design_level = @schedules[col_name].max
-
-    schedule_file = OpenStudio::Model::ScheduleFile.new(@model, @output_schedules_path)
-    schedule_file = schedule_file/design_level
     schedule_file.setName(col_name)
     schedule_file.setColumnNumber(col_index + 1)
     schedule_file.setRowstoSkipatTop(rows_to_skip)
@@ -1776,7 +1755,6 @@ class SchedulesFile
       ColumnLightingGarage,
       ColumnLightingExteriorHoliday,
       ColumnCookingRange,
-      ColumnCookingRangeGas,
       ColumnRefrigerator,
       ColumnExtraRefrigerator,
       ColumnFreezer,
