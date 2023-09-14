@@ -49,7 +49,6 @@ class ScheduleGenerator
             SchedulesFile::ColumnLightingInterior,
             SchedulesFile::ColumnLightingGarage,
             SchedulesFile::ColumnCookingRange,
-            SchedulesFile::ColumnCookingRangeGas,
             SchedulesFile::ColumnDishwasher,
             SchedulesFile::ColumnClothesWasher,
             SchedulesFile::ColumnClothesDryer,
@@ -569,7 +568,6 @@ class ScheduleGenerator
     cooking_power_sch = average_array(cooking_power_sch, @minutes_per_step)
     cooking_peak_power = cooking_power_sch.max
     @schedules[SchedulesFile::ColumnCookingRange] = cooking_power_sch.map { |power| power }
-    @schedules[SchedulesFile::ColumnCookingRangeGas] = cooking_power_sch.map { |power| power }
 
     random_offset = (prng.rand * 2 * offset_range).to_i - offset_range
     cw_power_sch = cw_power_sch.rotate(random_offset)
