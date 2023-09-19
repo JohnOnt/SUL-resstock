@@ -8,15 +8,21 @@ weather_files_url: https://data.nrel.gov/system/files/156/BuildStock_TMY3_FIPS.z
 # weather_files_path: c:/OpenStudio/BuildStock_TMY3_FIPS.zip
 
 sampler:
-  type: residential_quota
+  type: residential_quota_downselect
   args:
-    n_datapoints: 250
+    n_datapoints: 1000
+    logic:
+      - Clothes Dryer|Electric
+      - or:
+        - Cooking Range|Electric Induction
+        - Cooking Range|Electric Resistance
+    resample: false
 
 workflow_generator:
   type: residential_hpxml
   args:
     build_existing_model:
-      simulation_control_timestep: 60
+      simulation_control_timestep: 1
       simulation_control_run_period_begin_month: 1
       simulation_control_run_period_begin_day_of_month: 1
       simulation_control_run_period_end_month: 12

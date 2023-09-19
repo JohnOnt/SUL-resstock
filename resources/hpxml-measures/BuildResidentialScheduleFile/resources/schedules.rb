@@ -461,7 +461,7 @@ class ScheduleGenerator
         duration_min = (duration_15min * 15 * hot_water_dishwasher_monthly_multiplier[month - 1]).to_i
 
         duration = [duration_min, mins_in_year - step * 15].min
-        dw_power_sch.fill(avg_power * 4, step * 15, duration)
+        dw_power_sch.fill(avg_power, step * 15, duration)
         step_jump = duration_15min
       end
       last_state = dish_state
@@ -489,10 +489,10 @@ class ScheduleGenerator
         cw_duration_min = (cw_duration_15min * 15 * hot_water_clothes_washer_monthly_multiplier[month - 1]).to_i
 
         cw_duration = [cw_duration_min, mins_in_year - step * 15].min
-        cw_power_sch.fill(cw_avg_power * 4, step * 15, cw_duration)
+        cw_power_sch.fill(cw_avg_power, step * 15, cw_duration)
         cd_start_time = (step * 15 + cw_duration).to_i # clothes dryer starts immediately after washer ends\
         cd_duration = [cd_duration_min, mins_in_year - cd_start_time].min # cd_duration would be negative if cd_start_time > mins_in_year, and no filling would occur
-        cd_power_sch = cd_power_sch.fill(cd_avg_power * 4, cd_start_time, cd_duration)
+        cd_power_sch = cd_power_sch.fill(cd_avg_power, cd_start_time, cd_duration)
         step_jump = cw_duration_15min + cd_duration_15min
       end
       last_state = clothes_state
@@ -514,7 +514,7 @@ class ScheduleGenerator
         month = (start_time + step * 15 * 60).month
         duration_min = (duration_15min * 15 * cooking_monthly_multiplier[month - 1]).to_i
         duration = [duration_min, mins_in_year - step * 15].min
-        cooking_power_sch.fill(avg_power * 4, step * 15, duration)
+        cooking_power_sch.fill(avg_power, step * 15, duration)
         step_jump = duration_15min
       end
       last_state = cooking_state
