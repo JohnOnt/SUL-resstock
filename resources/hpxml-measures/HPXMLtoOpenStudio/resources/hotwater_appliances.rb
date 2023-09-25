@@ -83,6 +83,7 @@ class HotWaterAndAppliances
           cd_design_level_e = schedules_file.calc_design_level_from_schedule_max(col_name: cd_col_name)
         else
           cd_design_level_e = schedules_file.calc_design_level_from_annual_kwh(col_name: cd_col_name, annual_kwh: cd_annual_kwh)
+        end
         cd_design_level_f = schedules_file.calc_design_level_from_annual_therm(col_name: cd_col_name, annual_therm: cd_annual_therm)
         cd_schedule = schedules_file.create_schedule_file(col_name: cd_col_name, schedule_type_limits_name: Constants.ScheduleTypeLimitsFraction)
       end
@@ -210,6 +211,7 @@ class HotWaterAndAppliances
           cook_design_level_e = schedules_file.calc_design_level_from_schedule_max(col_name: cook_col_name)
         else
           cook_design_level_e = schedules_file.calc_design_level_from_annual_kwh(col_name: cook_col_name, annual_kwh: cook_annual_kwh)
+        end
         cook_design_level_f = schedules_file.calc_design_level_from_annual_therm(col_name: cook_col_name, annual_therm: cook_annual_therm)
         cook_schedule = schedules_file.create_schedule_file(col_name: cook_col_name, schedule_type_limits_name: Constants.ScheduleTypeLimitsFraction)
       end
