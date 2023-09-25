@@ -8,15 +8,9 @@ weather_files_url: https://data.nrel.gov/system/files/156/BuildStock_TMY3_FIPS.z
 # weather_files_path: c:/OpenStudio/BuildStock_TMY3_FIPS.zip
 
 sampler:
-  type: residential_quota_downselect
+  type: residential_quota
   args:
-    n_datapoints: 1000
-    logic:
-      - Clothes Dryer|Electric
-      - or:
-        - Cooking Range|Electric Induction
-        - Cooking Range|Electric Resistance
-    resample: false
+    n_datapoints: 100
 
 workflow_generator:
   type: residential_hpxml
