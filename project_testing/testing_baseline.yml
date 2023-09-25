@@ -10,7 +10,7 @@ weather_files_url: https://data.nrel.gov/system/files/156/BuildStock_TMY3_FIPS.z
 sampler:
   type: residential_quota
   args:
-    n_datapoints: 5
+    n_datapoints: 100
 
 # sampler:
   # type: precomputed
@@ -21,7 +21,7 @@ workflow_generator:
   type: residential_hpxml
   args:
     build_existing_model:
-      simulation_control_timestep: 1
+      simulation_control_timestep: 60
       simulation_control_run_period_begin_month: 1
       simulation_control_run_period_begin_day_of_month: 1
       simulation_control_run_period_end_month: 12
