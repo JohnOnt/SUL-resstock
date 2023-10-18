@@ -3,21 +3,32 @@ os_version: 3.6.1
 os_sha: bb9481519e
 buildstock_directory: ../ # Relative to this file or absolute
 project_directory: project_national # Relative to buildstock_directory
-output_directory: /scratch/ylou2/panel/power_correction
-#weather_files_url: https://data.nrel.gov/system/files/156/BuildStock_TMY3_FIPS.zip
+#output_directory: /scratch/ylou2/panel/power_correction
+output_directory: national_baseline_current_method_no_usage_multiplier
+weather_files_url: https://data.nrel.gov/system/files/156/BuildStock_TMY3_FIPS.zip
 # weather_files_path: c:/OpenStudio/BuildStock_TMY3_FIPS.zip
-weather_files_path: /shared-projects/buildstock/weather/BuildStock_TMY3_FIPS.zip
+#weather_files_path: /shared-projects/buildstock/weather/BuildStock_TMY3_FIPS.zip
 
 sampler:
-  type: residential_quota
+  type: residential_quota_downselect
   args:
-    n_datapoints: 550000
+    n_datapoints: 1000
+    logic:
+      - Clothes Dryer|Electric
+      - or:
+        - Cooking Range|Electric Induction
+        - Cooking Range|Electric Resistance
+    resample: true
+#sampler:
+#  type: residential_quota
+#  args:
+#    n_datapoints: 550000
 
 workflow_generator:
   type: residential_hpxml
   args:
     build_existing_model:
-      simulation_control_timestep: 15
+      simulation_control_timestep: 1
       simulation_control_run_period_begin_month: 1
       simulation_control_run_period_begin_day_of_month: 1
       simulation_control_run_period_end_month: 12
@@ -33,7 +44,7 @@ workflow_generator:
     #  - scenario_name: Bills
 
     simulation_output_report:
-      timeseries_frequency: timestep
+      timeseries_frequency: hourly
       include_timeseries_total_consumptions: true
       include_timeseries_fuel_consumptions: true
       include_timeseries_end_use_consumptions: true
