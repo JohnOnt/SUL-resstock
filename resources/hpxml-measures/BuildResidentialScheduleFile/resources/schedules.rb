@@ -33,6 +33,17 @@ class ScheduleGenerator
     @debug = debug
   end
 
+  def get_random_seed
+    if @random_seed.nil?
+      @runner.registerInfo('Unable to retrieve the schedules random seed; setting it to 1.')
+      seed = 1
+    else
+      @runner.registerInfo("Retrieved the schedules random seed; setting it to #{@random_seed}.")
+      seed = @random_seed
+    end
+    return seed
+  end
+
   def self.export_columns
     return [SchedulesFile::ColumnOccupants,
             SchedulesFile::ColumnLightingInterior,
@@ -46,7 +57,8 @@ class ScheduleGenerator
             SchedulesFile::ColumnPlugLoadsTV,
             SchedulesFile::ColumnHotWaterDishwasher,
             SchedulesFile::ColumnHotWaterClothesWasher,
-            SchedulesFile::ColumnHotWaterFixtures]
+            SchedulesFile::ColumnHotWaterFixtures,
+            SchedulesFile::ColumnHotWaterShowers]
   end
 
   def schedules
@@ -78,7 +90,7 @@ class ScheduleGenerator
 
   def create_stochastic_schedules(args:)
     # initialize a random number generator
-    prng = Random.new(@random_seed)
+    prng = Random.new(get_random_seed)
 
     # pre-load the probability distribution csv files for speed
     cluster_size_prob_map = read_activity_cluster_size_probs(resources_path: args[:resources_path])
@@ -520,6 +532,7 @@ class ScheduleGenerator
     shower_activity_sch = aggregate_array(shower_activity_sch, @minutes_per_step)
     shower_peak_flow = shower_activity_sch.max
     showers = shower_activity_sch.map { |flow| flow / shower_peak_flow }
+    @schedules[SchedulesFile::ColumnHotWaterShowers] = showers
 
     random_offset = (prng.rand * 2 * offset_range).to_i - offset_range
     sink_activity_sch = sink_activity_sch.rotate(-4 * 60 + random_offset) # 4 am shifting

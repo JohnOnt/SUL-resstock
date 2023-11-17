@@ -323,12 +323,7 @@
             <HeatingSystem>
               <SystemIdentifier id='HeatingSystem1'/>
               <HeatingSystemType>
-                <FloorFurnace>
-                  <PilotLight>true</PilotLight>
-                  <extension>
-                    <PilotLightBtuh>600.0</PilotLightBtuh>
-                  </extension>
-                </FloorFurnace>
+                <FloorFurnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>propane</HeatingSystemFuel>
               <HeatingCapacity>36000.0</HeatingCapacity>

@@ -8,11 +8,7 @@
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
-      <UtilityBillScenarios>
-        <UtilityBillScenario>
-          <Name>Bills</Name>
-        </UtilityBillScenario>
-      </UtilityBillScenarios>
+      <OccupancyCalculationType>asset</OccupancyCalculationType>
     </extension>
   </SoftwareInfo>
   <Building>
