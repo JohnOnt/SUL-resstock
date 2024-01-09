@@ -16,3 +16,6 @@
 **/.ipynb_checkpoints/*
 **/data/*
 !/resources/data/dictionary/outputs.csv
+
+# SUL Added Gitignore
+/testing_baseline

@@ -12,8 +12,6 @@ GEM
       minitest (>= 5.0)
       ruby-progressbar
     msgpack (1.5.1)
-    nokogiri (1.12.5-x64-mingw32)
-      racc (~> 1.4)
     nokogiri (1.12.5-x86_64-linux)
       racc (~> 1.4)
     oga (3.3)
@@ -35,6 +33,7 @@ GEM
     simplecov_json_formatter (0.1.3)
 
 PLATFORMS
+  universal-darwin-23
   x64-mingw32
   x86_64-linux
 

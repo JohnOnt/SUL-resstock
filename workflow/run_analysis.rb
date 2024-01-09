@@ -55,6 +55,9 @@ def run_workflow(yml, n_threads, measures_only, debug_arg, overwrite, building_i
   create_lib_folder(lib_dir, resources_dir, housing_characteristics_dir)
 
   # Create or read buildstock.csv
+  # [J.O] Buildstock seems to be the final file that contains the sampled building characteristics
+  # Some things to find out are:
+    # * Is it in the format from ResStock, or is it already in OpenStudio arguments?
   outfile = File.join('../lib/housing_characteristics/buildstock.csv')
   if !['precomputed'].include?(cfg['sampler']['type'])
     create_buildstock_csv(project_directory, n_datapoints, outfile)
@@ -81,6 +84,7 @@ def run_workflow(yml, n_threads, measures_only, debug_arg, overwrite, building_i
   xml_dir = File.join(results_dir, 'xml')
   Dir.mkdir(xml_dir)
 
+  # If Upgrades available, append to upgrade names
   upgrade_names = ['Baseline']
   if cfg.keys.include?('upgrades')
     cfg['upgrades'].each do |upgrade|
@@ -158,6 +162,7 @@ def run_workflow(yml, n_threads, measures_only, debug_arg, overwrite, building_i
       bld_exist_model_args['utility_bill_pv_monthly_grid_connection_fees'] = utility_bills.collect { |s| s['pv_monthly_grid_connection_fee'] }.join(',')
     end
 
+    # Add sampler method to bld_exist_model dictionary for passing to OpenStudio?
     if cfg['sampler']['type'] == 'residential_quota_downselect'
       bld_exist_model_args['downselect_logic'] = make_apply_logic_arg(cfg['sampler']['args']['logic'])
     end
@@ -206,6 +211,7 @@ def run_workflow(yml, n_threads, measures_only, debug_arg, overwrite, building_i
       sim_out_rep_args.delete('output_variables')
     end
 
+    # [J.O] Build the OpenStudio Workflow (OSW)
     osw = {
       'steps' => [
         {
@@ -566,6 +572,7 @@ def check_finished_job(result, finished_job)
   return result
 end
 
+# Just handles the arguments passed in a form that can take strings, arrays, and hashes
 def make_apply_logic_arg(logic)
   if logic.is_a?(Hash)
     key = logic.keys[0]

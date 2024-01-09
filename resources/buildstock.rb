@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'openstudio'
+#require '/Applications/OpenStudio-3.6.1/Ruby/openstudio.rb'
 if File.exist? File.absolute_path(File.join(File.dirname(__FILE__), '../lib/resources/hpxml-measures/HPXMLtoOpenStudio/resources')) # Hack to run ResStock on AWS
   resources_path = File.absolute_path(File.join(File.dirname(__FILE__), '../lib/resources/hpxml-measures/HPXMLtoOpenStudio/resources'))
 elsif File.exist? File.absolute_path(File.join(File.dirname(__FILE__), 'hpxml-measures/HPXMLtoOpenStudio/resources')) # Hack to run ResStock unit tests locally
