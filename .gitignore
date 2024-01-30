@@ -19,3 +19,6 @@
 
 # SUL Added Gitignore
 /testing_baseline
+/project_national/sim_2cat_output
+/Mass_Buildstocks/*.csv
+/.idea/

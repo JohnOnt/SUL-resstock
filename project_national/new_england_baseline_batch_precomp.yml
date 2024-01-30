@@ -4,25 +4,14 @@ os_sha: bb9481519e
 buildstock_directory: ../ # Relative to this file or absolute
 project_directory: project_national # Relative to buildstock_directory
 # regex('^(.*\/)?[a-z][a-z0-9_]*\/?$', required=True)
-output_directory: new_england_baseline
+output_directory: sim_2cat_output/run51/
 weather_files_path: ../../Buildstock_TMY3_FIPS.zip
 
-#sampler:
-#  type: precomputed
-#  args:
-#    sample_file: buildstocks/MA-n100-filled2.csv
-
 sampler:
-  type: residential_quota_downselect
+  type: precomputed
   args:
-    n_datapoints: 100
-    logic:
-      and:
-      - Geometry Building Type RECS|Single-Family Detached
-      - State|MA
-      - Vintage|1940s
-      - Geometry Floor Area|500-749
-    resample: true
+    sample_file: ../Mass_Buildstocks/buildstock_1980-4000plus.csv
+
 
 workflow_generator:
   type: residential_hpxml
@@ -64,20 +53,20 @@ workflow_generator:
       pv_monthly_grid_connection_fee: 2.5
 
     simulation_output_report:
-      timeseries_frequency: monthly
-      include_timeseries_total_consumptions: true
-      include_timeseries_fuel_consumptions: true
-      include_timeseries_end_use_consumptions: true
-      include_timeseries_emissions: true
-      include_timeseries_emission_fuels: true
-      include_timeseries_emission_end_uses: true
-      include_timeseries_hot_water_uses: true
-      include_timeseries_total_loads: true
-      include_timeseries_component_loads: true
-      include_timeseries_unmet_hours: true
-      include_timeseries_zone_temperatures: true
-      include_timeseries_airflows: true
-      include_timeseries_weather: true
+      timeseries_frequency: none
+#      include_timeseries_total_consumptions: true
+#      include_timeseries_fuel_consumptions: true
+#      include_timeseries_end_use_consumptions: true
+#      include_timeseries_emissions: true
+#      include_timeseries_emission_fuels: true
+#      include_timeseries_emission_end_uses: true
+#      include_timeseries_hot_water_uses: true
+#      include_timeseries_total_loads: true
+#      include_timeseries_component_loads: true
+#      include_timeseries_unmet_hours: true
+#      include_timeseries_zone_temperatures: true
+#      include_timeseries_airflows: true
+#      include_timeseries_weather: true
     #      timeseries_timestamp_convention: end
     #      timeseries_num_decimal_places: 4
     #      output_variables:
